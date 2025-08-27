@@ -180,8 +180,15 @@ export default function Page() {
       {tab === "upload" && (
         <section className="flex flex-col gap-3">
           <Uploader
-            onImageLoaded={(f) => {
-              /* future: parse screenshot */
+            onGridLoaded={(g) => {
+              const mapped = mapGridToMusic(g, { bpm });
+              setGrid(mapped);
+              const e = engineRef.current!;
+              e.setBpm(bpm);
+              e.attachGrid(mapped);
+              e.prepareScheduleFromGrid();
+              setPos(0);
+              setPlaying(false);
             }}
           />
         </section>
