@@ -4,10 +4,13 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GridScene } from "@/components/Grid3D";
 import Transport from "@/components/Transport";
 import Uploader from "@/components/Uploader";
+import { InstrumentSelect } from "@/components/InstrumentSelect";
 import { fetchContributionGrid } from "@/lib/contrib";
 import { mapGridToMusic } from "@/lib/mapping";
 import type { Grid, GridCell } from "@/lib/types";
 import { AudioEngine } from "@/lib/audio";
+import { getInstrumentFromUrl, setInstrumentInUrl } from "@/lib/state/urlParams";
+import type { InstrumentId } from "@/lib/instruments";
 import { format, subDays } from "date-fns";
 
 type Tab = "github" | "upload";
@@ -27,13 +30,28 @@ export default function Page() {
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
   const [bpm, setBpm] = useState(90);
+  const [instrument, setInstrument] = useState<InstrumentId>("piano");
 
   // init audio engine
   useEffect(() => {
     engineRef.current = new AudioEngine();
+    const e = engineRef.current;
+
+    const initial = (() => {
+      if (typeof window === "undefined") return "piano" as InstrumentId;
+      const urlInst = getInstrumentFromUrl();
+      const ls = localStorage.getItem("instrument") as InstrumentId | null;
+      return urlInst || ls || "piano";
+    })();
+    setInstrument(initial);
+    if (typeof window !== "undefined") {
+      setInstrumentInUrl(initial);
+    }
+    void e?.setInstrument(initial);
+
     const id = setInterval(() => {
-      const e = engineRef.current!;
-      setPos(e.getPositionSec());
+      const eng = engineRef.current!;
+      setPos(eng.getPositionSec());
     }, 100);
     return () => clearInterval(id);
   }, []);
@@ -102,6 +120,15 @@ export default function Page() {
     e.preview(freq, cell.velocity, Math.max(0.12, cell.duration));
   };
 
+  const changeInstrument = async (id: InstrumentId) => {
+    setInstrument(id);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("instrument", id);
+      setInstrumentInUrl(id);
+    }
+    await engineRef.current?.setInstrument(id);
+  };
+
   return (
     <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
@@ -109,7 +136,8 @@ export default function Page() {
           <h1 className="text-2xl font-semibold">ContriSonics</h1>
           <p className="opacity-70 text-sm">3D GitHub contributions → music.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <InstrumentSelect value={instrument} onChange={changeInstrument} />
           <button
             className={`px-3 py-1 rounded ${
               tab === "github"
