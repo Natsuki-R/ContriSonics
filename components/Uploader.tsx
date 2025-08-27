@@ -48,6 +48,8 @@ function parseImage(img: HTMLImageElement): Grid {
   const cellW = img.width / cols;
   const cellH = img.height / rows;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const cells: GridCell[] = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
@@ -55,11 +57,15 @@ function parseImage(img: HTMLImageElement): Grid {
       const y = Math.floor(row * cellH + cellH / 2);
       const data = ctx.getImageData(x, y, 1, 1).data;
       const bucket = nearestBucket(data[0], data[1], data[2]);
+      const daysAgo = (cols - 1 - col) * 7 + row;
+      const d = new Date(today);
+      d.setDate(d.getDate() - daysAgo);
+      const iso = d.toISOString().slice(0, 10);
       cells.push({
-        date: '',
-        count: 0,
-        color: GH_COLORS[bucket],
-        intensity: bucket,
+        date: iso,
+        count: bucket,
+        colorHex: GH_COLORS[bucket],
+        intensity: bucket as 0 | 1 | 2 | 3 | 4,
         row,
         col,
         noteIndex: 0,

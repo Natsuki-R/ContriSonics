@@ -44,7 +44,7 @@ export async function fetchContributionGrid(
       cells.push({
         date: d.date,
         count: d.count,
-        color: d.color,
+        colorHex: d.color,
         intensity: 0,
         row,
         col,

@@ -5,6 +5,8 @@ import { GridScene } from "@/components/Grid3D";
 import Transport from "@/components/Transport";
 import Uploader from "@/components/Uploader";
 import { InstrumentSelect } from "@/components/InstrumentSelect";
+import { HeatmapTooltip } from "@/components/HeatmapTooltip";
+import { PointerTracker } from "./PointerTracker";
 import { fetchContributionGrid } from "@/lib/contrib";
 import { mapGridToMusic } from "@/lib/mapping";
 import type { Grid, GridCell } from "@/lib/types";
@@ -130,7 +132,10 @@ export default function Page() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
+    <>
+      <PointerTracker />
+      <HeatmapTooltip />
+      <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">ContriSonics</h1>
@@ -245,6 +250,7 @@ export default function Page() {
       <footer className="opacity-60 text-xs">
         Built with Next.js, react-three-fiber, and the Web Audio API. © Natsuki.
       </footer>
-    </main>
+      </main>
+    </>
   );
 }
