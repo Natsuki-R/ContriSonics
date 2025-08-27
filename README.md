@@ -23,7 +23,7 @@ Open http://localhost:3000
 - 3D heatmap with react-three-fiber.
 - Web Audio engine (oscillator-based) with Play/Pause/Seek and hover preview.
 - ±15s skip, BPM control, Scale/Key selection.
-- Screenshot upload stub (UI; parsing/color-bucketing can be added later).
+- Screenshot upload parses GitHub heatmap screenshots into a 7×53 contribution grid.
 
 ## Folders
 
