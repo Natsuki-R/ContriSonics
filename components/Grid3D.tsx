@@ -1,42 +1,15 @@
 'use client';
 
-import React, { useMemo, useRef } from 'react';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
+import React, { useMemo } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
 import type { Grid, GridCell } from '@/lib/types';
+import { GridCell3D } from './GridCell3D';
 
 type Props = {
   grid: Grid | null;
   onHoverNote?: (cell: GridCell) => void;
 };
-
-function CellBox({ cell, onHoverNote }: { cell: GridCell, onHoverNote?: (c: GridCell)=>void }) {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const height = 0.2 + (cell.intensity * 0.35);
-  const color = new THREE.Color(cell.color || '#2ea043');
-  const emissive = color.clone().multiplyScalar(0.25 + cell.intensity * 0.15);
-  const posX = cell.col * 0.9;
-  const posZ = cell.row * 0.9;
-
-  const onPointerOver = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    onHoverNote?.(cell);
-  };
-
-  return (
-    <mesh
-      ref={meshRef}
-      position={[posX, height/2, posZ]}
-      onPointerOver={onPointerOver}
-      castShadow
-      receiveShadow
-    >
-      <boxGeometry args={[0.8, height, 0.8]} />
-      <meshStandardMaterial color={color} emissive={emissive} />
-    </mesh>
-  );
-}
 
 export function GridScene({ grid, onHoverNote }: Props) {
   const size = useMemo(() => ({
@@ -54,7 +27,7 @@ export function GridScene({ grid, onHoverNote }: Props) {
           <meshStandardMaterial color={'#111214'} />
         </mesh>
         {grid?.cells.map((c, i) => (
-          <CellBox key={i} cell={c} onHoverNote={onHoverNote} />
+          <GridCell3D key={i} cell={c} onHoverNote={onHoverNote} />
         ))}
       </group>
       <OrbitControls enablePan={false} minPolarAngle={Math.PI/4} maxPolarAngle={Math.PI/3} />
