@@ -80,6 +80,9 @@ export class AudioEngine {
   }
 
   preview(freq: number, velocity = 0.8, duration = 0.25) {
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
     const t = this.ctx.currentTime + 0.01;
     this.playVoice(t, freq, duration, velocity);
   }
@@ -110,6 +113,10 @@ export class AudioEngine {
   play() {
     if (!this.grid) return;
     if (!this.scheduled.length) this.prepareScheduleFromGrid();
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     this.playing = true;
     this.startTime = this.ctx.currentTime;
