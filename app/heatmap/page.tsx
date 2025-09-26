@@ -43,6 +43,7 @@ export default function HeatmapPage() {
     instrument,
     changeInstrument,
     previewCell,
+    activeCell,
   } = useContributionExperience();
 
   return (
@@ -85,7 +86,7 @@ export default function HeatmapPage() {
           />
 
           <section className="rounded-md border border-neutral-800 bg-neutral-900/40">
-            <Grid2D grid={grid} onHoverNote={previewCell} />
+            <Grid2D grid={grid} onHoverNote={previewCell} activeCell={activeCell} />
             <div className="flex items-center gap-2 px-4 pb-4 text-xs text-neutral-400">
               <span>Less</span>
               {GITHUB_PALETTE.map((color) => (

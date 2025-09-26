@@ -1,5 +1,5 @@
 import { semitoneToFreq } from './mapping';
-import type { Grid } from './types';
+import type { Grid, GridCell } from './types';
 import { INSTRUMENTS, type InstrumentId, type Instrument as InstrumentDef } from './instruments';
 
 interface LoadedSampler {
@@ -20,6 +20,8 @@ type ScheduledNote = {
   duration: number;
   velocity: number;
   col: number;     // to allow column-based grouping if needed
+  cell: GridCell;
+  hasTriggered: boolean;
 };
 
 export class AudioEngine {
@@ -42,6 +44,7 @@ export class AudioEngine {
   timer: number | null = null;
   grid: Grid | null = null;
   activeSources: AudioScheduledSourceNode[] = [];
+  activeCellListener: ((cell: GridCell | null) => void) | null = null;
 
   constructor() {
     this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -108,6 +111,29 @@ export class AudioEngine {
     this.grid = grid;
     this.scheduled = [];
     this.currentCol = 0;
+    this.notifyActiveCell(null);
+  }
+
+  setActiveCellListener(listener: ((cell: GridCell | null) => void) | null) {
+    this.activeCellListener = listener;
+  }
+
+  private notifyActiveCell(cell: GridCell | null) {
+    if (this.activeCellListener) {
+      this.activeCellListener(cell);
+    }
+  }
+
+  private updateTriggeredForPosition(position: number) {
+    let last: GridCell | null = null;
+    for (const note of this.scheduled) {
+      const triggered = note.time < position;
+      note.hasTriggered = triggered;
+      if (triggered) {
+        last = note.cell;
+      }
+    }
+    this.notifyActiveCell(last);
   }
 
   private columnDurationSec(): number {
@@ -218,9 +244,12 @@ export class AudioEngine {
         duration: Math.max(0.12, cell.duration),
         velocity: cell.velocity,
         col: cell.col,
+        cell,
+        hasTriggered: false,
       });
     }
     this.scheduled = notes.sort((a, b) => a.time - b.time);
+    this.updateTriggeredForPosition(this.startAtPos);
   }
 
   play() {
@@ -233,30 +262,39 @@ export class AudioEngine {
 
     this.playing = true;
     this.startTime = this.ctx.currentTime;
+    this.updateTriggeredForPosition(this.startAtPos);
     const tick = () => {
       if (!this.playing) return;
       const now = this.ctx.currentTime - this.startTime + this.startAtPos;
       const horizon = now + this.lookahead;
       for (const n of this.scheduled) {
-        if (n.time >= now && n.time < horizon) {
+        if (!n.hasTriggered && n.time >= now && n.time < horizon) {
           this.playVoice(this.startTime + (n.time - this.startAtPos), n.freq, n.duration, n.velocity);
+          n.hasTriggered = true;
+          this.notifyActiveCell(n.cell);
         }
+      }
+      if (now >= this.getTotalDurationSec()) {
+        this.stop();
       }
     };
     this.timer = window.setInterval(tick, 25);
   }
 
   pause() {
+    const pos = this.getPositionSec();
     this.playing = false;
     if (this.timer) window.clearInterval(this.timer);
     this.timer = null;
     // remember position
-    this.startAtPos = this.getPositionSec();
+    this.startAtPos = pos;
+    this.updateTriggeredForPosition(this.startAtPos);
   }
 
   stop() {
     this.pause();
     this.startAtPos = 0;
+    this.updateTriggeredForPosition(this.startAtPos);
   }
 
   getTotalDurationSec(): number {
@@ -271,6 +309,7 @@ export class AudioEngine {
 
   seekTo(seconds: number) {
     this.startAtPos = Math.max(0, Math.min(seconds, this.getTotalDurationSec()));
+    this.updateTriggeredForPosition(this.startAtPos);
     if (this.playing) {
       this.pause();
       this.play();

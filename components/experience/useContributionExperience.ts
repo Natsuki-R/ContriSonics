@@ -27,6 +27,7 @@ export function useContributionExperience() {
   const [position, setPosition] = useState(0);
   const [bpm, setBpm] = useState(90);
   const [instrument, setInstrument] = useState<InstrumentId>("piano");
+  const [activeCell, setActiveCell] = useState<GridCell | null>(null);
 
   useEffect(() => {
     engineRef.current = new AudioEngine();
@@ -44,6 +45,9 @@ export function useContributionExperience() {
       setInstrumentInUrl(initialInstrument);
     }
     void engine?.setInstrument(initialInstrument);
+    engine?.setActiveCellListener((cell) => {
+      setActiveCell(cell);
+    });
 
     const timer = window.setInterval(() => {
       const eng = engineRef.current;
@@ -54,7 +58,10 @@ export function useContributionExperience() {
 
     return () => {
       window.clearInterval(timer);
-      engineRef.current?.pause();
+      if (engineRef.current) {
+        engineRef.current.setActiveCellListener(null);
+        engineRef.current.pause();
+      }
     };
   }, []);
 
@@ -71,6 +78,7 @@ export function useContributionExperience() {
       }
       setPosition(0);
       setPlaying(false);
+      setActiveCell(null);
     },
     [bpm]
   );
@@ -188,5 +196,6 @@ export function useContributionExperience() {
     instrument,
     changeInstrument,
     previewCell,
+    activeCell,
   } as const;
 }
