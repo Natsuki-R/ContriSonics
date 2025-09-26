@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { GridScene } from "@/components/Grid3D";
 import Transport from "@/components/Transport";
 import Uploader from "@/components/Uploader";
@@ -163,6 +164,12 @@ export default function Page() {
           >
             Upload
           </button>
+          <Link
+            href="/heatmap"
+            className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+          >
+            2D Heatmap
+          </Link>
         </div>
       </header>
 
