@@ -27,8 +27,8 @@ Open http://localhost:3000
 
 ## Theme system
 
-- Light, dark, and system-aware themes powered by a custom wrapper around `next-themes`.
-- Theme choice persists to `localStorage` (`contrisonics-theme`) and respects OS preference by default.
+- Light, dark, and system-aware themes powered by [`next-themes`](https://github.com/pacocoursey/next-themes) with persistence between visits.
+- Theme choice respects OS preference by default and falls back to system whenever the user clears their selection.
 - Color tokens are defined once in `app/globals.css` as CSS variables. Update these variables to tweak global surfaces, borders, buttons, tooltip, and react-three-fiber scene backgrounds.
 - The top-right theme toggle (light/dark/system) updates both UI components and the 3D scene in real time.
 - Components refreshed for contrast in both themes: `app/page.tsx`, `components/Transport.tsx`, `components/InstrumentSelect.tsx`, `components/experience/ContributionControls.tsx`, `components/Uploader.tsx`, and `components/HeatmapTooltip.tsx`.
