@@ -30,10 +30,12 @@ function getMatches(): Omit<MediaState, "ready"> {
 }
 
 export function useMedia(): MediaState {
-  const [state, setState] = useState<MediaState>(() => ({
-    ...getMatches(),
-    ready: typeof window !== "undefined",
-  }));
+  const [state, setState] = useState<MediaState>({
+    isDesktop: false,
+    isTablet: false,
+    isMobile: false,
+    ready: false,
+  });
 
   const queries = useMemo(
     () => [DESKTOP_QUERY, TABLET_QUERY, MOBILE_QUERY] as const,
