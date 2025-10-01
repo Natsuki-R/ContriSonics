@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import { GridScene } from "@/components/Grid3D";
 import Transport from "@/components/Transport";
 import { InstrumentSelect } from "@/components/InstrumentSelect";
@@ -8,8 +9,11 @@ import { HeatmapTooltip } from "@/components/HeatmapTooltip";
 import { PointerTracker } from "./PointerTracker";
 import { useContributionExperience } from "@/components/experience/useContributionExperience";
 import { ContributionControls } from "@/components/experience/ContributionControls";
+import { LiteApp } from "@/components/LiteApp";
+import { MobileFallback } from "@/components/MobileFallback";
+import { useMedia } from "@/hooks/useMedia";
 
-export default function Page() {
+function DesktopApp() {
   const {
     tab,
     setTab,
@@ -41,17 +45,17 @@ export default function Page() {
     <>
       <PointerTracker />
       <HeatmapTooltip />
-      <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
-        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <main className="mx-auto flex max-w-6xl flex-col gap-4 p-4">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold">ContriSonics</h1>
-            <p className="opacity-70 text-sm">3D GitHub contributions → music.</p>
+            <p className="text-sm opacity-70">3D GitHub contributions → music.</p>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2">
             <InstrumentSelect value={instrument} onChange={changeInstrument} />
             <Link
               href="/heatmap"
-              className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+              className="rounded bg-neutral-800 px-3 py-1 hover:bg-neutral-700"
             >
               2D Heatmap
             </Link>
@@ -73,9 +77,11 @@ export default function Page() {
           onUpload={handleUploadGrid}
         />
 
-        <section className="h-[520px] rounded-md overflow-hidden border border-neutral-800">
+        <section className="overflow-hidden rounded-md border border-neutral-800">
           {grid ? (
-            <GridScene grid={grid} onHoverNote={previewCell} />
+            <div className="mx-auto w-[min(1200px,95vw)] aspect-[16/9]">
+              <GridScene grid={grid} onHoverNote={previewCell} />
+            </div>
           ) : (
             <div className="p-6 opacity-70">No grid loaded yet.</div>
           )}
@@ -93,10 +99,32 @@ export default function Page() {
           onBpmChange={setBpm}
         />
 
-        <footer className="opacity-60 text-xs">
+        <footer className="text-xs opacity-60">
           Built with Next.js, react-three-fiber, and the Web Audio API. © Natsuki.
         </footer>
       </main>
     </>
   );
+}
+
+export default function Page() {
+  const media = useMedia();
+
+  if (!media.ready) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-neutral-300">
+        Loading experience…
+      </main>
+    );
+  }
+
+  if (media.isMobile) {
+    return <MobileFallback />;
+  }
+
+  if (media.isTablet) {
+    return <LiteApp />;
+  }
+
+  return <DesktopApp />;
 }
