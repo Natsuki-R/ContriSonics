@@ -31,18 +31,18 @@ export default function Transport({
 }: Props) {
   const isLarge = size === "lg";
   const gapClass = isLarge ? "gap-3" : "gap-2";
-  const paddingClass = isLarge ? "p-3" : "p-2";
-  const containerClasses = `flex flex-col ${gapClass} ${paddingClass} bg-neutral-900/60 rounded-md ${
+  const paddingClass = isLarge ? "p-4" : "p-3";
+  const containerClasses = `flex flex-col ${gapClass} ${paddingClass} rounded-lg border border-subtle surface-elevated shadow-sm ${
     className ?? ""
   }`;
   const buttonBase = isLarge
-    ? "rounded bg-neutral-800 hover:bg-neutral-700 px-4 py-2 text-base"
-    : "rounded bg-neutral-800 hover:bg-neutral-700 px-3 py-1";
+    ? "rounded-full px-4 py-2 text-base font-medium btn-muted transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
+    : "rounded-full px-3 py-1.5 text-sm font-medium btn-muted transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]";
   const primaryButton = isLarge
-    ? "rounded bg-blue-600 hover:bg-blue-500 px-5 py-2 text-base"
-    : "rounded bg-blue-600 hover:bg-blue-500 px-4 py-1";
+    ? "rounded-full bg-[var(--color-accent)] px-5 py-2 text-base font-semibold text-[var(--color-accent-foreground)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
+    : "rounded-full bg-[var(--color-accent)] px-4 py-1.5 text-sm font-semibold text-[var(--color-accent-foreground)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]";
   const sliderClass = isLarge ? "h-2" : "";
-  const bpmLabel = isLarge ? "text-sm" : "text-sm opacity-80";
+  const bpmLabel = isLarge ? "text-sm font-medium" : "text-xs text-muted";
   const bpmWrapper = isLarge ? "ml-0 sm:ml-4 gap-3" : "ml-4 gap-2";
 
   return (

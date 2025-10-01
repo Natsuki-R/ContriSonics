@@ -17,14 +17,14 @@ export function InstrumentSelect({ value, onChange, size = "md" }: Props) {
   ];
 
   const labelClass =
-    size === "lg" ? "text-base font-medium" : "text-sm opacity-80";
+    size === "lg" ? "text-base font-medium" : "text-xs text-muted";
   const selectClass =
     size === "lg"
-      ? "border rounded px-3 py-2 text-base bg-neutral-900"
-      : "border rounded px-2 py-1 bg-neutral-900";
+      ? "w-full min-w-[10rem] rounded-full border border-subtle bg-[var(--color-surface)] px-3 py-2 text-base text-[var(--color-text)] shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
+      : "rounded-full border border-subtle bg-[var(--color-surface)] px-2 py-1 text-sm text-[var(--color-text)] shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]";
 
   return (
-    <label className="flex items-center gap-2">
+    <label className="flex items-center gap-2 text-[var(--color-text)]">
       <span className={labelClass}>Instrument</span>
       <select
         className={selectClass}

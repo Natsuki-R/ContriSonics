@@ -12,6 +12,7 @@ import { ContributionControls } from "@/components/experience/ContributionContro
 import { LiteApp } from "@/components/LiteApp";
 import { MobileFallback } from "@/components/MobileFallback";
 import { useMedia } from "@/hooks/useMedia";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function DesktopApp() {
   const {
@@ -45,20 +46,21 @@ function DesktopApp() {
     <>
       <PointerTracker />
       <HeatmapTooltip />
-      <main className="mx-auto flex max-w-6xl flex-col gap-4 p-4">
+      <main className="mx-auto flex max-w-6xl flex-col gap-4 p-4 text-[var(--color-text)]">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold">ContriSonics</h1>
-            <p className="text-sm opacity-70">3D GitHub contributions → music.</p>
+            <p className="text-sm text-muted">3D GitHub contributions → music.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
             <InstrumentSelect value={instrument} onChange={changeInstrument} />
             <Link
               href="/heatmap"
-              className="rounded bg-neutral-800 px-3 py-1 hover:bg-neutral-700"
+              className="rounded-full bg-[var(--color-button)] px-3 py-1 text-sm font-medium transition hover:bg-[var(--color-button-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
             >
               2D Heatmap
             </Link>
+            <ThemeToggle />
           </div>
         </header>
 
@@ -77,13 +79,13 @@ function DesktopApp() {
           onUpload={handleUploadGrid}
         />
 
-        <section className="overflow-hidden rounded-md border border-neutral-800">
+        <section className="overflow-hidden rounded-md border border-subtle surface-elevated">
           {grid ? (
             <div className="mx-auto w-[min(1200px,95vw)] aspect-[16/9]">
               <GridScene grid={grid} onHoverNote={previewCell} />
             </div>
           ) : (
-            <div className="p-6 opacity-70">No grid loaded yet.</div>
+            <div className="p-6 text-muted">No grid loaded yet.</div>
           )}
         </section>
 
@@ -99,7 +101,7 @@ function DesktopApp() {
           onBpmChange={setBpm}
         />
 
-        <footer className="text-xs opacity-60">
+        <footer className="text-xs text-muted">
           Built with Next.js, react-three-fiber, and the Web Audio API. © Natsuki.
         </footer>
       </main>
@@ -112,7 +114,7 @@ export default function Page() {
 
   if (!media.ready) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-neutral-300">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] text-muted">
         Loading experience…
       </main>
     );
