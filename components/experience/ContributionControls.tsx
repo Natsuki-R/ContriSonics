@@ -37,27 +37,28 @@ export function ContributionControls({
 }: Props) {
   const isTouch = variant === "touch";
   const tabButtonBase = isTouch
-    ? "px-4 py-2 text-base"
-    : "px-3 py-1 text-sm sm:text-base";
-  const tabActiveClass = "bg-blue-600";
+    ? "px-4 py-2 text-base font-medium"
+    : "px-3 py-1 text-sm font-medium sm:text-base";
+  const tabActiveClass =
+    "bg-[var(--color-accent)] text-[var(--color-accent-foreground)] shadow-sm";
   const tabIdleClass = isTouch
-    ? "bg-neutral-800 hover:bg-neutral-700"
-    : "bg-neutral-800 hover:bg-neutral-700";
+    ? "btn-muted hover:bg-[var(--color-button-hover)]"
+    : "btn-muted hover:bg-[var(--color-button-hover)]";
   const sectionPadding = isTouch ? "p-4" : "p-3";
-  const labelClass = isTouch ? "text-sm font-medium" : "text-xs opacity-70";
+  const labelClass = isTouch ? "text-sm font-medium" : "text-xs text-muted";
   const inputClass = isTouch
-    ? "w-full rounded border border-neutral-800 bg-neutral-900 px-3 py-3 text-base"
-    : "w-full rounded border border-neutral-800 bg-neutral-900 px-3 py-2";
+    ? "w-full rounded-md border border-subtle bg-[var(--color-surface)] px-3 py-3 text-base text-[var(--color-text)] shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
+    : "w-full rounded-md border border-subtle bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)] shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]";
   const loadButtonClass = isTouch
-    ? "px-4 py-3 text-base"
-    : "px-3 py-2";
+    ? "px-4 py-3 text-base font-medium"
+    : "px-3 py-2 text-sm font-medium";
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 flex-wrap">
         <button
           type="button"
-          className={`${tabButtonBase} rounded ${
+          className={`${tabButtonBase} rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)] ${
             tab === "github" ? tabActiveClass : tabIdleClass
           }`}
           onClick={() => onTabChange("github")}
@@ -66,7 +67,7 @@ export function ContributionControls({
         </button>
         <button
           type="button"
-          className={`${tabButtonBase} rounded ${
+          className={`${tabButtonBase} rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)] ${
             tab === "upload" ? tabActiveClass : tabIdleClass
           }`}
           onClick={() => onTabChange("upload")}
@@ -77,7 +78,7 @@ export function ContributionControls({
 
       {tab === "github" && (
         <section
-          className={`flex flex-col gap-3 border border-neutral-800 rounded-md ${sectionPadding}`}
+          className={`flex flex-col gap-3 rounded-md border border-subtle surface-elevated ${sectionPadding}`}
         >
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div className="col-span-2">
@@ -111,14 +112,14 @@ export function ContributionControls({
           <div className="flex gap-2 items-center">
             <button
               type="button"
-              className={`${loadButtonClass} rounded bg-blue-600 hover:bg-blue-500 disabled:opacity-60`}
+              className={`${loadButtonClass} rounded-full bg-[var(--color-accent)] text-[var(--color-accent-foreground)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)] disabled:opacity-60`}
               onClick={onLoadGithub}
               disabled={loading}
             >
               {loading ? "Loading…" : "Load contributions"}
             </button>
             {error && (
-              <span className={`text-red-400 ${isTouch ? "text-base" : "text-sm"}`}>
+              <span className={`text-rose-400 ${isTouch ? "text-base" : "text-sm"}`}>
                 {error}
               </span>
             )}

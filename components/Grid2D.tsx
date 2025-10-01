@@ -26,7 +26,7 @@ export function Grid2D({ grid, onHoverNote, activeCell }: Props) {
   );
 
   if (!grid) {
-    return <div className="p-6 opacity-70">No grid loaded yet.</div>;
+    return <div className="p-6 text-muted">No grid loaded yet.</div>;
   }
 
   return (
@@ -42,10 +42,10 @@ export function Grid2D({ grid, onHoverNote, activeCell }: Props) {
         const isCurrent =
           activeCell?.row === cell.row && activeCell?.col === cell.col;
         const classes = [
-          "aspect-square rounded-sm border transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-          isActive ? "border-neutral-700" : "border-neutral-900",
+          "aspect-square rounded-sm border border-subtle transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]",
+          isActive ? "border-strong" : null,
           isCurrent
-            ? "ring-2 ring-emerald-400 ring-offset-2 ring-offset-neutral-900 scale-110 shadow-[0_0_12px_rgba(52,211,153,0.55)]"
+            ? "ring-2 ring-emerald-400 ring-offset-2 ring-offset-[var(--color-bg)] scale-110 shadow-[0_0_12px_rgba(52,211,153,0.45)]"
             : null,
         ]
           .filter(Boolean)

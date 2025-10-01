@@ -17,6 +17,8 @@ import Transport from "@/components/Transport";
 import { InstrumentSelect } from "@/components/InstrumentSelect";
 import type { Grid, GridCell } from "@/lib/types";
 import { formatContribution, formatDateLong } from "@/lib/format";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useSceneColors } from "@/hooks/useSceneColors";
 
 export function LiteApp() {
   const {
@@ -79,21 +81,26 @@ export function LiteApp() {
     controlsRef.current?.update();
   };
 
+  const sceneColors = useSceneColors();
+
   return (
-    <div className="flex min-h-screen flex-col gap-6 bg-neutral-950 px-5 py-6 text-neutral-100">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">ContriSonics Lite</h1>
-        <p className="text-base text-neutral-400">
-          Streamlined tablet mode with adaptive quality controls.
-        </p>
+    <div className="flex min-h-screen flex-col gap-6 bg-[var(--color-bg)] px-5 py-6 text-[var(--color-text)]">
+      <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold">ContriSonics Lite</h1>
+          <p className="text-base text-muted">
+            Streamlined tablet mode with adaptive quality controls.
+          </p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <div className="flex flex-col gap-5">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-subtle surface-elevated p-4">
           <InstrumentSelect value={instrument} onChange={changeInstrument} size="lg" />
           <Link
             href="/heatmap"
-            className="rounded-full bg-blue-600 px-5 py-3 text-base font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+            className="rounded-full bg-[var(--color-accent)] px-5 py-3 text-base font-semibold text-[var(--color-accent-foreground)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
           >
             Open 2D Heatmap
           </Link>
@@ -116,7 +123,7 @@ export function LiteApp() {
         />
 
         <div className="space-y-3">
-          <div className="mx-auto w-[min(1200px,95vw)] aspect-[16/9] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950/80">
+          <div className="mx-auto w-[min(1200px,95vw)] aspect-[16/9] overflow-hidden rounded-xl border border-subtle surface-elevated">
             {grid ? (
               <Canvas
                 camera={{ position: cameraPosition, fov: 55 }}
@@ -138,22 +145,24 @@ export function LiteApp() {
                   onSelectCell={handleSelectCell}
                   quality={quality}
                   controlsRef={controlsRef}
+                  background={sceneColors.background}
+                  planeColor={sceneColors.plane}
                 />
               </Canvas>
             ) : (
-              <div className="flex h-full items-center justify-center px-6 text-center text-neutral-500">
+              <div className="flex h-full items-center justify-center px-6 text-center text-muted">
                 Load a contribution grid to explore it in 3D.
               </div>
             )}
           </div>
 
-          <div className="text-center text-sm text-neutral-300">{activeSummary}</div>
+          <div className="text-center text-sm text-muted">{activeSummary}</div>
 
           <div className="flex justify-center">
             <button
               type="button"
               onClick={handleResetView}
-              className="rounded-full bg-neutral-200 px-6 py-3 text-base font-medium text-neutral-900 shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="rounded-full bg-[var(--color-button)] px-6 py-3 text-base font-medium text-[var(--color-text)] shadow-sm transition hover:bg-[var(--color-button-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
             >
               Reset View
             </button>
@@ -174,7 +183,7 @@ export function LiteApp() {
         />
       </div>
 
-      <footer className="pt-6 text-sm text-neutral-500">
+      <footer className="pt-6 text-sm text-muted">
         Optimized for tablets. Switch to desktop for shadows and the full 3D treatment.
       </footer>
     </div>
@@ -186,11 +195,15 @@ function LiteScene({
   onSelectCell,
   quality,
   controlsRef,
+  background,
+  planeColor,
 }: {
   grid: Grid;
   onSelectCell: (cell: GridCell) => void;
   quality: "high" | "low";
   controlsRef: React.RefObject<OrbitControlsImpl>;
+  background: string;
+  planeColor: string;
 }) {
   const spacing = quality === "high" ? 0.82 : 0.95;
   const heightScale = quality === "high" ? 0.32 : 0.24;
@@ -205,13 +218,13 @@ function LiteScene({
 
   return (
     <group>
-      <color attach="background" args={["#050506"]} />
+      <color attach="background" args={[background]} />
       <hemisphereLight args={["#f8fafc", "#0f172a", 0.85]} />
       <directionalLight position={[10, 12, 6]} intensity={0.65} />
       <group position={[offset.x, 0, offset.z]}>
         <mesh rotation-x={-Math.PI / 2}>
           <planeGeometry args={[Math.max(12, cols * spacing + 4), Math.max(12, rows * spacing + 4)]} />
-          <meshStandardMaterial color="#111217" />
+          <meshStandardMaterial color={planeColor} />
         </mesh>
         {grid.cells.map((cell) => (
           <LiteColumn

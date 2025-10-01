@@ -8,6 +8,7 @@ import { ContributionControls } from "@/components/experience/ContributionContro
 import Transport from "@/components/Transport";
 import { Grid2D } from "@/components/Grid2D";
 import { useContributionExperience } from "@/components/experience/useContributionExperience";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const GITHUB_PALETTE = [
   "#161b22",
@@ -50,23 +51,24 @@ export default function HeatmapPage() {
     <>
       <PointerTracker />
       <HeatmapTooltip />
-      <main className="min-h-screen bg-neutral-950 text-white">
-        <div className="max-w-6xl mx-auto p-4 flex flex-col gap-6">
-          <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 p-4">
+          <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1">
               <h1 className="text-2xl font-semibold">GitHub 2D Heatmap</h1>
-              <p className="opacity-70 text-sm">
+              <p className="text-sm text-muted">
                 Explore a flat contribution grid with the same musical controls and data sources as the 3D view.
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
               <InstrumentSelect value={instrument} onChange={changeInstrument} />
               <Link
                 href="/"
-                className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+                className="rounded-full bg-[var(--color-button)] px-3 py-1 text-sm font-medium transition hover:bg-[var(--color-button-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
               >
                 ← Back to 3D experience
               </Link>
+              <ThemeToggle />
             </div>
           </header>
 
@@ -85,14 +87,14 @@ export default function HeatmapPage() {
             onUpload={handleUploadGrid}
           />
 
-          <section className="rounded-md border border-neutral-800 bg-neutral-900/40">
+          <section className="rounded-md border border-subtle surface-elevated">
             <Grid2D grid={grid} onHoverNote={previewCell} activeCell={activeCell} />
-            <div className="flex items-center gap-2 px-4 pb-4 text-xs text-neutral-400">
+            <div className="flex items-center gap-2 px-4 pb-4 text-xs text-muted">
               <span>Less</span>
               {GITHUB_PALETTE.map((color) => (
                 <span
                   key={color}
-                  className="h-3 w-3 rounded-sm border border-neutral-800"
+                  className="h-3 w-3 rounded-sm border border-subtle"
                   style={{ backgroundColor: color }}
                   aria-hidden
                 />
@@ -113,7 +115,7 @@ export default function HeatmapPage() {
             onBpmChange={setBpm}
           />
 
-          <footer className="opacity-60 text-xs">
+          <footer className="text-xs text-muted">
             Built with Next.js, Tailwind CSS, and the Web Audio API. © Natsuki.
           </footer>
         </div>
