@@ -25,6 +25,14 @@ Open http://localhost:3000
 - ±15s skip, BPM control, Scale/Key selection.
 - Screenshot upload parses GitHub heatmap screenshots into a 7×53 contribution grid.
 
+## Theme system
+
+- Light, dark, and system-aware themes powered by a custom wrapper around `next-themes`.
+- Theme choice persists to `localStorage` (`contrisonics-theme`) and respects OS preference by default.
+- Color tokens are defined once in `app/globals.css` as CSS variables. Update these variables to tweak global surfaces, borders, buttons, tooltip, and react-three-fiber scene backgrounds.
+- The top-right theme toggle (light/dark/system) updates both UI components and the 3D scene in real time.
+- Components refreshed for contrast in both themes: `app/page.tsx`, `components/Transport.tsx`, `components/InstrumentSelect.tsx`, `components/experience/ContributionControls.tsx`, `components/Uploader.tsx`, and `components/HeatmapTooltip.tsx`.
+
 ## Folders
 
 - `app/` Next.js App Router pages and API routes.

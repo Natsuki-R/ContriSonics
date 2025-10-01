@@ -10,10 +10,10 @@ export function InstrumentSelect({ value, onChange }: { value: InstrumentId; onC
     {id:"synth",label:"Synth"},
   ];
   return (
-    <label className="flex items-center gap-2">
-      <span className="text-sm opacity-80">Instrument</span>
+    <label className="flex items-center gap-2 text-sm text-[color:var(--color-muted)]">
+      <span>Instrument</span>
       <select
-        className="border rounded px-2 py-1 bg-neutral-900"
+        className="focus-ring rounded-md border border-[color:var(--color-border)] bg-[var(--color-card)] px-2.5 py-1.5 text-sm text-[color:var(--color-text)] shadow-sm transition-colors"
         value={value}
         onChange={e=>onChange(e.target.value as InstrumentId)}
         aria-label="Instrument"

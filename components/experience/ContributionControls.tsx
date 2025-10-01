@@ -35,13 +35,13 @@ export function ContributionControls({
 }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          className={`px-3 py-1 rounded ${
+          className={`focus-ring rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             tab === "github"
-              ? "bg-blue-600"
-              : "bg-neutral-800 hover:bg-neutral-700"
+              ? "bg-[var(--color-primary)] text-[color:var(--color-primary-foreground)]"
+              : "border border-[color:var(--color-border)] bg-[var(--color-card)] text-[color:var(--color-text)] hover:bg-[var(--color-card-strong)]"
           }`}
           onClick={() => onTabChange("github")}
         >
@@ -49,10 +49,10 @@ export function ContributionControls({
         </button>
         <button
           type="button"
-          className={`px-3 py-1 rounded ${
+          className={`focus-ring rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             tab === "upload"
-              ? "bg-blue-600"
-              : "bg-neutral-800 hover:bg-neutral-700"
+              ? "bg-[var(--color-primary)] text-[color:var(--color-primary-foreground)]"
+              : "border border-[color:var(--color-border)] bg-[var(--color-card)] text-[color:var(--color-text)] hover:bg-[var(--color-card-strong)]"
           }`}
           onClick={() => onTabChange("upload")}
         >
@@ -61,31 +61,31 @@ export function ContributionControls({
       </div>
 
       {tab === "github" && (
-        <section className="flex flex-col gap-3 p-3 border border-neutral-800 rounded-md">
+        <section className="flex flex-col gap-3 rounded-lg border border-[color:var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div className="col-span-2">
-              <label className="text-xs opacity-70">GitHub username</label>
+              <label className="text-xs uppercase tracking-wide text-[color:var(--color-muted)]">GitHub username</label>
               <input
-                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-800"
+                className="focus-ring mt-1 w-full rounded-md border border-[color:var(--color-border)] bg-[var(--color-input-bg)] px-3 py-2 text-[color:var(--color-text)] shadow-sm"
                 value={username}
                 onChange={(e) => onUsernameChange(e.target.value)}
                 placeholder="octocat"
               />
             </div>
             <div>
-              <label className="text-xs opacity-70">From</label>
+              <label className="text-xs uppercase tracking-wide text-[color:var(--color-muted)]">From</label>
               <input
                 type="date"
-                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-800"
+                className="focus-ring mt-1 w-full rounded-md border border-[color:var(--color-border)] bg-[var(--color-input-bg)] px-3 py-2 text-[color:var(--color-text)] shadow-sm"
                 value={from}
                 onChange={(e) => onFromChange(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-xs opacity-70">To</label>
+              <label className="text-xs uppercase tracking-wide text-[color:var(--color-muted)]">To</label>
               <input
                 type="date"
-                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-800"
+                className="focus-ring mt-1 w-full rounded-md border border-[color:var(--color-border)] bg-[var(--color-input-bg)] px-3 py-2 text-[color:var(--color-text)] shadow-sm"
                 value={to}
                 onChange={(e) => onToChange(e.target.value)}
               />
@@ -94,13 +94,13 @@ export function ContributionControls({
           <div className="flex gap-2 items-center">
             <button
               type="button"
-              className="px-3 py-2 rounded bg-blue-600 hover:bg-blue-500 disabled:opacity-60"
+              className="focus-ring rounded-md bg-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[color:var(--color-primary-foreground)] transition-colors hover:bg-[var(--color-primary-hover)] disabled:opacity-60"
               onClick={onLoadGithub}
               disabled={loading}
             >
               {loading ? "Loading…" : "Load contributions"}
             </button>
-            {error && <span className="text-red-400 text-sm">{error}</span>}
+            {error && <span className="text-sm text-red-500 dark:text-red-300">{error}</span>}
           </div>
         </section>
       )}

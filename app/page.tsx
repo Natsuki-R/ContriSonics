@@ -8,6 +8,7 @@ import { HeatmapTooltip } from "@/components/HeatmapTooltip";
 import { PointerTracker } from "./PointerTracker";
 import { useContributionExperience } from "@/components/experience/useContributionExperience";
 import { ContributionControls } from "@/components/experience/ContributionControls";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Page() {
   const {
@@ -41,17 +42,18 @@ export default function Page() {
     <>
       <PointerTracker />
       <HeatmapTooltip />
-      <main className="max-w-6xl mx-auto p-4 flex flex-col gap-4">
-        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
+      <main className="max-w-6xl mx-auto flex flex-col gap-5 p-4">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
             <h1 className="text-2xl font-semibold">ContriSonics</h1>
-            <p className="opacity-70 text-sm">3D GitHub contributions → music.</p>
+            <p className="text-sm text-[color:var(--color-muted)]">3D GitHub contributions → music.</p>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <ThemeToggle />
             <InstrumentSelect value={instrument} onChange={changeInstrument} />
             <Link
               href="/heatmap"
-              className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+              className="focus-ring inline-flex items-center rounded-md border border-[color:var(--color-border)] bg-[var(--color-button-bg)] px-3 py-1.5 text-sm font-medium text-[color:var(--color-button-text)] transition-colors hover:bg-[var(--color-button-hover)]"
             >
               2D Heatmap
             </Link>
@@ -73,11 +75,11 @@ export default function Page() {
           onUpload={handleUploadGrid}
         />
 
-        <section className="h-[520px] rounded-md overflow-hidden border border-neutral-800">
+        <section className="h-[520px] overflow-hidden rounded-lg border border-[color:var(--color-border)] bg-[var(--color-card)]">
           {grid ? (
             <GridScene grid={grid} onHoverNote={previewCell} />
           ) : (
-            <div className="p-6 opacity-70">No grid loaded yet.</div>
+            <div className="p-6 text-[color:var(--color-muted)]">No grid loaded yet.</div>
           )}
         </section>
 
@@ -93,7 +95,7 @@ export default function Page() {
           onBpmChange={setBpm}
         />
 
-        <footer className="opacity-60 text-xs">
+        <footer className="text-xs text-[color:var(--color-muted)]">
           Built with Next.js, react-three-fiber, and the Web Audio API. © Natsuki.
         </footer>
       </main>

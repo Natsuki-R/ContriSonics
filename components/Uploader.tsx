@@ -97,8 +97,8 @@ export default function Uploader({ onGridLoaded }: Props) {
   };
 
   return (
-    <div className="p-3 border border-neutral-800 rounded-md">
-      <div className="flex items-center gap-3">
+    <div className="rounded-lg border border-[color:var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3">
         <input
           type="file"
           ref={ref}
@@ -112,14 +112,14 @@ export default function Uploader({ onGridLoaded }: Props) {
           }}
         />
         <button
-          className="px-3 py-2 rounded bg-neutral-800 hover:bg-neutral-700"
+          className="focus-ring rounded-md border border-transparent bg-[var(--color-button-bg)] px-3 py-2 text-sm font-medium text-[color:var(--color-button-text)] transition-colors hover:bg-[var(--color-button-hover)]"
           onClick={() => ref.current?.click()}
         >
           Upload GitHub screenshot
         </button>
-        <span className="opacity-70 text-sm">{name}</span>
+        <span className="text-sm text-[color:var(--color-muted)]">{name}</span>
       </div>
-      <p className="text-xs opacity-70 mt-2">
+      <p className="mt-2 text-xs text-[color:var(--color-muted)]">
         Parsing is naive and expects a raw GitHub contribution grid screenshot.
       </p>
     </div>
