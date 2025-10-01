@@ -52,6 +52,7 @@ export function GridCell3D({ cell, onHoverNote }: Props) {
       ref={ref}
       position={[posX, height / 2, posZ]}
       onPointerOver={handlePointerOver}
+      onPointerDown={handlePointerOver}
       onPointerOut={handlePointerOut}
       onFocus={handleFocus}
       onBlur={handleBlur}
