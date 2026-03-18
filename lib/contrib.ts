@@ -64,7 +64,7 @@ export async function fetchContributionGrid(
     q4 = q(0.8);
 
   for (const c of cells) {
-    let bucket = 0;
+    let bucket: 0 | 1 | 2 | 3 | 4 = 0;
     if (c.count <= 0) bucket = 0;
     else if (c.count <= q1) bucket = 1;
     else if (c.count <= q2) bucket = 2;

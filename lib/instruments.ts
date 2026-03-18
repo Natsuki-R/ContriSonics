@@ -31,9 +31,13 @@ export const INSTRUMENTS: Record<InstrumentId, Instrument> = {
   },
   piano: {
     id: "piano", label: "Piano",
-    type: "sampler",
-    samples: { 60:"/samples/piano/C4.mp3", 64:"/samples/piano/E4.mp3", 67:"/samples/piano/G4.mp3" },
-    gain: 0.9, reverbSend: 0.2,
+    type: "synth",
+    recipe: {
+      osc: "triangle", voices: 3, detuneCents: 4,
+      attack: 0.005, decay: 0.35, sustain: 0.18, release: 0.9,
+      filter: { type: "lowpass", cutoffHz: 4000, q: 0.5 }
+    },
+    gain: 0.9, reverbSend: 0.25,
   },
   organ: {
     id: "organ", label: "Organ",

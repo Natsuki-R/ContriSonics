@@ -47,6 +47,8 @@ export function GridCell3D({ cell, onHoverNote }: Props) {
 
   const handleBlur = () => setHovered(null);
 
+  const a11yProps = { onFocus: handleFocus, onBlur: handleBlur, tabIndex: 0 } as Record<string, unknown>;
+
   return (
     <mesh
       ref={ref}
@@ -54,9 +56,7 @@ export function GridCell3D({ cell, onHoverNote }: Props) {
       onPointerOver={handlePointerOver}
       onPointerDown={handlePointerOver}
       onPointerOut={handlePointerOut}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      tabIndex={0}
+      {...a11yProps}
       userData={{ cell }}
       castShadow
       receiveShadow
