@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function MobileFallback() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] px-6 py-10 text-center text-[var(--color-text)]">
-      <ThemeToggle className="self-end" />
       <div className="max-w-md space-y-4">
         <h1 className="text-2xl font-semibold">ContriSonics</h1>
         <p className="text-base leading-relaxed text-muted">

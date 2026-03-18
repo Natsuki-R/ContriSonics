@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Color } from 'three';
@@ -16,10 +16,16 @@ type Props = {
 export function GridScene({ grid, onHoverNote }: Props) {
   const sceneColors = useSceneColors();
 
-  const size = useMemo(() => ({
-    w: (grid?.cols ?? 0) * 0.9,
-    h: (grid?.rows ?? 0) * 0.9
-  }), [grid]);
+  const size = useMemo(() => {
+    const cols = grid?.cols ?? 0;
+    const rows = grid?.rows ?? 0;
+    return {
+      w: cols * 0.9,
+      h: rows * 0.9,
+      cx: ((cols - 1) * 0.9) / 2,
+      cz: ((rows - 1) * 0.9) / 2,
+    };
+  }, [grid]);
 
   return (
     <Canvas
@@ -36,8 +42,8 @@ export function GridScene({ grid, onHoverNote }: Props) {
       <VisibilityController />
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 10, 5]} intensity={1.0} castShadow />
-      <group position={[-size.w/2, 0, -size.h/2]}>
-        <mesh rotation-x={-Math.PI/2} receiveShadow>
+      <group position={[-size.cx, 0, -size.cz]}>
+        <mesh position={[size.cx, -0.01, size.cz]} rotation-x={-Math.PI/2} receiveShadow>
           <planeGeometry args={[Math.max(8, size.w+2), Math.max(8, size.h+2)]} />
           <meshStandardMaterial color={sceneColors.plane} />
         </mesh>

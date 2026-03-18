@@ -6,8 +6,8 @@ interface LoadedSampler {
   buffers: Record<number, AudioBuffer>;
 }
 
-const DEFAULT_RECIPE = {
-  osc: 'sine' as OscillatorType,
+const DEFAULT_RECIPE: NonNullable<InstrumentDef['recipe']> = {
+  osc: 'sine',
   attack: 0.01,
   decay: 0.1,
   sustain: 0.8,
@@ -56,9 +56,27 @@ export class AudioEngine {
     this.instrumentGain.gain.value = this.instrument.gain;
     this.instrumentGain.connect(this.master);
 
+    this.initReverb();
+
     this.reverbGain = this.ctx.createGain();
     this.reverbGain.gain.value = this.instrument.reverbSend;
     this.reverbGain.connect(this.reverb ?? this.master);
+  }
+
+  private initReverb() {
+    const sampleRate = this.ctx.sampleRate;
+    const length = sampleRate * 2;
+    const buffer = this.ctx.createBuffer(2, length, sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = buffer.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-3.5 * i / length);
+      }
+    }
+    this.reverb = this.ctx.createConvolver();
+    this.reverb.buffer = buffer;
+    this.reverb.normalize = true;
+    this.reverb.connect(this.master);
   }
 
   setBpm(bpm: number) { this.bpm = bpm; }
@@ -146,8 +164,9 @@ export class AudioEngine {
   }
 
   private trackSource(src: AudioScheduledSourceNode) {
-    const max = this.instrument.recipe?.voices ?? 32;
-    if (this.activeSources.length >= max) {
+    const voices = this.instrument.recipe?.voices ?? 1;
+    const maxSources = Math.max(32, voices * 16);
+    if (this.activeSources.length >= maxSources) {
       const old = this.activeSources.shift();
       old?.stop();
     }
@@ -160,22 +179,44 @@ export class AudioEngine {
 
   private playSynth(time: number, freq: number, duration: number, velocity: number) {
     const recipe = this.instrument.recipe ?? DEFAULT_RECIPE;
-    const osc = this.ctx.createOscillator();
-    osc.type = recipe.osc;
-    const gain = this.ctx.createGain();
+    const voices = recipe.voices ?? 1;
+    const detuneCents = recipe.detuneCents ?? 0;
 
-    osc.frequency.value = freq;
+    const gain = this.ctx.createGain();
+    const voiceVelocity = velocity / Math.sqrt(voices);
+
     gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(velocity, time + recipe.attack);
-    gain.gain.linearRampToValueAtTime(velocity * recipe.sustain, time + recipe.attack + recipe.decay);
+    gain.gain.linearRampToValueAtTime(voiceVelocity, time + recipe.attack);
+    gain.gain.linearRampToValueAtTime(voiceVelocity * recipe.sustain, time + recipe.attack + recipe.decay);
     gain.gain.setTargetAtTime(0.0001, time + recipe.attack + recipe.decay + duration, recipe.release);
 
-    osc.connect(gain);
-    gain.connect(this.instrumentGain);
-    gain.connect(this.reverbGain);
-    osc.start(time);
-    osc.stop(time + recipe.attack + recipe.decay + duration + recipe.release + 0.1);
-    this.trackSource(osc);
+    let outputNode: AudioNode = gain;
+    if (recipe.filter) {
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = recipe.filter.type;
+      filter.frequency.value = recipe.filter.cutoffHz;
+      filter.Q.value = recipe.filter.q ?? 1;
+      gain.connect(filter);
+      outputNode = filter;
+    }
+
+    outputNode.connect(this.instrumentGain);
+    outputNode.connect(this.reverbGain);
+
+    const endTime = time + recipe.attack + recipe.decay + duration + recipe.release + 0.1;
+
+    for (let i = 0; i < voices; i++) {
+      const osc = this.ctx.createOscillator();
+      osc.type = recipe.osc;
+      osc.frequency.value = freq;
+      if (voices > 1) {
+        osc.detune.value = (i - (voices - 1) / 2) * detuneCents;
+      }
+      osc.connect(gain);
+      osc.start(time);
+      osc.stop(endTime);
+      this.trackSource(osc);
+    }
   }
 
   private playSampler(time: number, freq: number, duration: number, velocity: number) {

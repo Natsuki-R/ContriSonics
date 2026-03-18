@@ -1,20 +1,30 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 
 import { GridScene } from "@/components/Grid3D";
+import { Grid2D } from "@/components/Grid2D";
 import Transport from "@/components/Transport";
 import { InstrumentSelect } from "@/components/InstrumentSelect";
 import { HeatmapTooltip } from "@/components/HeatmapTooltip";
 import { PointerTracker } from "./PointerTracker";
 import { useContributionExperience } from "@/components/experience/useContributionExperience";
 import { ContributionControls } from "@/components/experience/ContributionControls";
-import { LiteApp } from "@/components/LiteApp";
 import { MobileFallback } from "@/components/MobileFallback";
 import { useMedia } from "@/hooks/useMedia";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ModeBar } from "@/components/ModeBar";
+import type { ViewMode } from "@/components/ViewToggle";
 
-function DesktopApp() {
+const GITHUB_PALETTE = [
+  "#161b22",
+  "#0e4429",
+  "#006d32",
+  "#26a641",
+  "#39d353",
+];
+
+function App() {
+  const [viewMode, setViewMode] = useState<ViewMode>("2d");
   const {
     tab,
     setTab,
@@ -40,6 +50,7 @@ function DesktopApp() {
     instrument,
     changeInstrument,
     previewCell,
+    activeCell,
   } = useContributionExperience();
 
   return (
@@ -50,23 +61,21 @@ function DesktopApp() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold">ContriSonics</h1>
-            <p className="text-sm text-muted">3D GitHub contributions → music.</p>
+            <p className="text-sm text-muted">GitHub contributions → music.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+            <ModeBar
+              sourceTab={tab}
+              onSourceTabChange={setTab}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
             <InstrumentSelect value={instrument} onChange={changeInstrument} />
-            <Link
-              href="/heatmap"
-              className="rounded-full bg-[var(--color-button)] px-3 py-1 text-sm font-medium transition hover:bg-[var(--color-button-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus-ring)]"
-            >
-              2D Heatmap
-            </Link>
-            <ThemeToggle />
           </div>
         </header>
 
         <ContributionControls
           tab={tab}
-          onTabChange={setTab}
           username={username}
           onUsernameChange={setUsername}
           from={from}
@@ -80,12 +89,30 @@ function DesktopApp() {
         />
 
         <section className="overflow-hidden rounded-md border border-subtle surface-elevated">
-          {grid ? (
-            <div className="mx-auto w-[min(1200px,95vw)] aspect-[16/9]">
-              <GridScene grid={grid} onHoverNote={previewCell} />
-            </div>
+          {viewMode === "3d" ? (
+            grid ? (
+              <div className="mx-auto w-[min(1200px,95vw)] h-[min(50vh,480px)]">
+                <GridScene grid={grid} onHoverNote={previewCell} />
+              </div>
+            ) : (
+              <div className="p-6 text-muted">No grid loaded yet.</div>
+            )
           ) : (
-            <div className="p-6 text-muted">No grid loaded yet.</div>
+            <>
+              <Grid2D grid={grid} onHoverNote={previewCell} activeCell={activeCell} />
+              <div className="flex items-center gap-2 px-4 pb-4 text-xs text-muted">
+                <span>Less</span>
+                {GITHUB_PALETTE.map((color) => (
+                  <span
+                    key={color}
+                    className="h-3 w-3 rounded-sm border border-subtle"
+                    style={{ backgroundColor: color }}
+                    aria-hidden
+                  />
+                ))}
+                <span>More</span>
+              </div>
+            </>
           )}
         </section>
 
@@ -124,9 +151,5 @@ export default function Page() {
     return <MobileFallback />;
   }
 
-  if (media.isTablet) {
-    return <LiteApp />;
-  }
-
-  return <DesktopApp />;
+  return <App />;
 }
